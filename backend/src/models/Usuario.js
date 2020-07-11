@@ -1,31 +1,50 @@
-import Sequelize, { Model } from 'sequelize';
+import { Schema, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-class Usuario extends Model {
-  static init(sequelize) {
-    super.init(
-      {
-        email: Sequelize.STRING,
-        senha: Sequelize.VIRTUAL,
-        senha_hash: Sequelize.STRING,
-      },
-      {
-        sequelize,
-      }
-    );
-
-    this.addHook('beforeSave', async usuario => {
-      if (usuario.senha) {
-        usuario.senha_hash = await bcrypt.hash(usuario.senha, 8);
-      }
-    });
-
-    return this;
+const UsuarioSchema = new Schema(
+  {
+    nome: {
+      type: String,
+      required: true,
+    },
+    sobrenome: {
+      type: String,
+      required: true,
+    },
+    foto: {
+      type: String,
+      required: false,
+    },
+    celular: {
+      type: Number,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    senha: {
+      type: String,
+      required: true,
+      select: false,
+    },
+  },
+  {
+    timestamps: true,
   }
+);
 
-  checkPassword(senha) {
-    return bcrypt.compare(senha, this.senha_hash);
-  }
+UsuarioSchema.pre('save', async next => {
+  const hash = await bcrypt.hash(this.senha, 10);
+  this.senha = hash;
+
+  next();
+});
+
+export default function checkPassword(senha) {
+  return bcrypt.compare(senha, this.senha);
 }
 
-export default Usuario;
+module.exports = model('Usuario', UsuarioSchema);
