@@ -1,13 +1,17 @@
 import { Router } from 'express';
 
-// import Usuario from './controllers/Usuario';
+import Usuario from './controllers/Usuario';
 // import Sessao from './controllers/Sessao';
 // import Feed from './controllers/Feed';
 import authMiddleware from './middlewares/auth';
 
 const routes = new Router();
 
-// routes.post('/usuarios', Usuario.store);
+routes.get('/usuarios', Usuario.index);
+routes.get('/usuarios/:id', Usuario.show);
+routes.post('/usuarios', Usuario.store);
+routes.delete('/usuarios/:id', Usuario.delete);
+
 // routes.post('/sessoes', Sessao.store);
 
 // // validação de jwt ficara aqui

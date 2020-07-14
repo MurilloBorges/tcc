@@ -7,17 +7,13 @@ const UsuarioSchema = new Schema(
       type: String,
       required: true,
     },
-    sobrenome: {
-      type: String,
-      required: true,
-    },
     foto: {
       type: String,
       required: false,
     },
     celular: {
       type: String,
-      required: true,
+      required: false,
     },
     email: {
       type: String,
@@ -36,7 +32,8 @@ const UsuarioSchema = new Schema(
   }
 );
 
-UsuarioSchema.pre('save', async next => {
+UsuarioSchema.pre('save', async function(next) {
+  console.log('this', this);
   const hash = await bcrypt.hash(this.senha, 10);
   this.senha = hash;
 

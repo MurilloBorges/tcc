@@ -2,31 +2,61 @@ import * as Yup from 'yup';
 import Usuario from '../models/Usuario';
 
 class UsuarioController {
+  async index(req, res) {
+    try {
+      const usuarios = await Usuario.find();
+      res.json(usuarios);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
+  async show(req, res) {
+    try {
+      const usuario = await Usuario.findById(req.params.id);
+      if (usuario.length === 0) {
+        return res.status(404).json([]);
+      }
+      return res.json(usuario);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
+  }
+
   async store(req, res) {
-    const schema = Yup.object().shape({
-      email: Yup.string()
-        .email()
-        .required(),
-      senha: Yup.string().required(),
-    });
+    try {
+      const schema = Yup.object().shape({
+        nome: Yup.string().required(),
+        foto: Yup.string(),
+        celular: Yup.string(),
+        email: Yup.string()
+          .email()
+          .required(),
+        senha: Yup.string()
+          .required()
+          .min(6),
+      });
 
-    if (!(await schema.isValid(req.body))) {
-      return res
-        .status(400)
-        .json({ error: 'Validacoes dos campos nao esta coerente' });
+      if (!(await schema.isValid(req.body))) {
+        return res
+          .status(400)
+          .json({ error: 'Validações dos campos incorreta' });
+      }
+
+      const usuarioExistente = await Usuario.findOne({ email: req.body.email });
+
+      if (usuarioExistente) {
+        return res.status(400).json({ error: 'Usuario existente' });
+      }
+
+      const { _id, nome, foto, celular, email } = await Usuario.create(
+        req.body
+      );
+
+      return res.json({ _id, nome, foto, celular, email });
+    } catch (error) {
+      return res.status(500).json({ error });
     }
-
-    const usuarioExistente = await Usuario.findOne({
-      where: { email: req.body.email },
-    });
-
-    if (usuarioExistente) {
-      return res.status(400).json({ error: 'Usuario já existe' });
-    }
-
-    const { id, nome, usuario } = await Usuario.create(req.body);
-
-    return res.json({ id, nome, usuario });
   }
 
   async update(req, res) {
@@ -73,6 +103,18 @@ class UsuarioController {
     const { id, nome } = await usuario.update(req.body);
 
     return res.json({ id, nome, email });
+  }
+
+  async delete(req, res) {
+    try {
+      const usuario = await Usuario.findByIdAndDelete(req.params.id);
+      if (usuario.length === 0) {
+        return res.status(404).json([]);
+      }
+      return res.json(usuario);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
   }
 }
 
