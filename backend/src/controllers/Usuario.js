@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import bcrypt from 'bcryptjs';
 import Usuario from '../models/Usuario';
 
 class UsuarioController {
@@ -62,7 +63,9 @@ class UsuarioController {
   async update(req, res) {
     const schema = Yup.object().shape({
       nome: Yup.string(),
-      email: Yup.string().email(),
+      foto: Yup.string(),
+      celular: Yup.string(),
+      // email: Yup.string().email(),
       senhaAntiga: Yup.string().min(6),
       senha: Yup.string()
         .min(6)
@@ -75,34 +78,26 @@ class UsuarioController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res
-        .status(400)
-        .json({ error: 'Validacoes dos campos nao esta coerente' });
+      return res.status(400).json({ error: 'Validações dos campos incorreta' });
     }
 
-    const { email, senhaAntiga } = req.body;
+    const { senhaAntiga } = req.body;
 
-    const usuario = await Usuario.findByPk(req.idUsuario);
+    const usuario = await Usuario.findOne({ _id: req.params.id }).select(
+      '+senha'
+    );
 
-    if (email !== usuario.email) {
-      const usuarioExistente = await Usuario.findOne({
-        where: { email },
-      });
-
-      if (usuarioExistente) {
-        return res
-          .status(400)
-          .json({ error: 'Existe usuario com este e-mail' });
-      }
+    if (senhaAntiga && !(await bcrypt.compare(senhaAntiga, usuario.senha))) {
+      return res.status(401).json({ error: 'Senhas não correspondem' });
     }
 
-    if (senhaAntiga && !(await usuario.checkPassword(senhaAntiga))) {
-      return res.status(401).json({ error: 'Senhas nao correspondem' });
-    }
+    const { _id, nome, foto, celular, email } = await Usuario.findAndModify(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
 
-    const { id, nome } = await usuario.update(req.body);
-
-    return res.json({ id, nome, email });
+    return res.json({ _id, nome, foto, celular, email });
   }
 
   async delete(req, res) {

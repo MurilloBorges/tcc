@@ -33,15 +33,10 @@ const UsuarioSchema = new Schema(
 );
 
 UsuarioSchema.pre('save', async function(next) {
-  console.log('this', this);
   const hash = await bcrypt.hash(this.senha, 10);
   this.senha = hash;
 
   next();
 });
-
-export default function checkPassword(senha) {
-  return bcrypt.compare(senha, this.senha);
-}
 
 module.exports = model('Usuario', UsuarioSchema);

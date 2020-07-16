@@ -11,6 +11,7 @@ routes.get('/usuarios', Usuario.index);
 routes.get('/usuarios/:id', Usuario.show);
 routes.post('/usuarios', Usuario.store);
 routes.delete('/usuarios/:id', Usuario.delete);
+routes.patch('/usuarios/:id', Usuario.update);
 
 // routes.post('/sessoes', Sessao.store);
 
