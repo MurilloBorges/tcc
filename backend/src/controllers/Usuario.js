@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Usuario from '../models/Usuario';
+import { isEmpty } from '../helpers/funcoes';
 
 class UsuarioController {
   async index(req, res) {
@@ -14,9 +15,11 @@ class UsuarioController {
   async show(req, res) {
     try {
       const usuario = await Usuario.findById(req.params.id);
-      if (usuario.length === 0) {
-        return res.status(404).json([]);
+
+      if (isEmpty(usuario)) {
+        return res.status(404).json();
       }
+
       return res.json(usuario);
     } catch (error) {
       return res.status(500).json({ error });
@@ -46,14 +49,16 @@ class UsuarioController {
       const usuarioExistente = await Usuario.findOne({ email: req.body.email });
 
       if (usuarioExistente) {
-        return res.status(400).json({ error: 'Usuario existente' });
+        return res
+          .status(400)
+          .json({ error: 'Já existe uma conta vinculada a este e-mail' });
       }
 
       const { _id, nome, foto, celular, email } = await Usuario.create(
         req.body
       );
 
-      return res.json({ _id, nome, foto, celular, email });
+      return res.status(201).json({ _id, nome, foto, celular, email });
     } catch (error) {
       return res.status(500).json({ error });
     }
@@ -108,10 +113,12 @@ class UsuarioController {
   async delete(req, res) {
     try {
       const usuario = await Usuario.findByIdAndDelete(req.params.id);
-      if (usuario.length === 0) {
-        return res.status(404).json([]);
+
+      if (isEmpty(usuario)) {
+        return res.status(404).json();
       }
-      return res.json(usuario);
+
+      return res.status(204).json();
     } catch (error) {
       return res.status(500).json({ error });
     }
