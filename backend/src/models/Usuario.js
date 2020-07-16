@@ -39,4 +39,11 @@ UsuarioSchema.pre('save', async function(next) {
   next();
 });
 
+UsuarioSchema.pre('findOneAndUpdate', async function(next) {
+  const hash = await bcrypt.hash(this.getUpdate().senha, 10);
+  this.getUpdate().senha = hash;
+
+  next();
+});
+
 module.exports = model('Usuario', UsuarioSchema);

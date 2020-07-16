@@ -66,43 +66,52 @@ class UsuarioController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      nome: Yup.string(),
-      foto: Yup.string(),
-      celular: Yup.string(),
-      // email: Yup.string().email(),
-      senhaAntiga: Yup.string().min(6),
-      senha: Yup.string()
-        .min(6)
-        .when('senhaAntiga', (senhaAntiga, field) =>
-          senhaAntiga ? field.required() : field
+    try {
+      const schema = Yup.object().shape({
+        nome: Yup.string(),
+        foto: Yup.string(),
+        celular: Yup.string(),
+        // email: Yup.string().email(),
+        senhaAntiga: Yup.string().min(6),
+        senha: Yup.string()
+          .min(6)
+          .when('senhaAntiga', (senhaAntiga, field) =>
+            senhaAntiga ? field.required() : field
+          ),
+        senhaConfirmacao: Yup.string(6).when('senha', (senha, field) =>
+          senha ? field.required().oneOf([Yup.ref('senha')]) : field
         ),
-      senhaConfirmacao: Yup.string(6).when('senha', (senha, field) =>
-        senha ? field.required().oneOf([Yup.ref('senha')]) : field
-      ),
-    });
+      });
 
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validações dos campos incorreta' });
+      if (!(await schema.isValid(req.body))) {
+        return res
+          .status(400)
+          .json({ error: 'Validações dos campos incorreta' });
+      }
+
+      const { senhaAntiga, nome, celular, foto, senha } = req.body;
+
+      const usuario = await Usuario.findById(req.params.id).select('+senha');
+
+      if (isEmpty(usuario)) {
+        return res.status(404).json();
+      }
+
+      if (senhaAntiga && !(await bcrypt.compare(senhaAntiga, usuario.senha))) {
+        return res.status(400).json({ error: 'Senhas não correspondem' });
+      }
+
+      await Usuario.findByIdAndUpdate(req.params.id, {
+        nome,
+        celular,
+        foto,
+        senha,
+      });
+
+      return res.status(204).json();
+    } catch (error) {
+      return res.status(500).json({ error });
     }
-
-    const { senhaAntiga } = req.body;
-
-    const usuario = await Usuario.findOne({ _id: req.params.id }).select(
-      '+senha'
-    );
-
-    if (senhaAntiga && !(await bcrypt.compare(senhaAntiga, usuario.senha))) {
-      return res.status(401).json({ error: 'Senhas não correspondem' });
-    }
-
-    const { _id, nome, foto, celular, email } = await Usuario.findAndModify(
-      { _id: req.params.id },
-      req.body,
-      { new: true }
-    );
-
-    return res.json({ _id, nome, foto, celular, email });
   }
 
   async delete(req, res) {
