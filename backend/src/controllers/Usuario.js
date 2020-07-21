@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
 import Usuario from '../models/Usuario';
+import { generateToken } from './Authenticate';
 import { isEmpty } from '../helpers/funcoes';
 
 class UsuarioController {
@@ -59,7 +60,16 @@ class UsuarioController {
         req.body
       );
 
-      return res.status(201).json({ _id, nome, foto, celular, email });
+      return res.status(201).json({
+        usuario: {
+          _id,
+          nome,
+          foto,
+          celular,
+          email,
+        },
+        token: generateToken({ id: _id }),
+      });
     } catch (error) {
       return res.status(500).json({ error });
     }
