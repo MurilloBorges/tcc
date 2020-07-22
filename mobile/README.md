@@ -2,3 +2,5 @@
 npm install -g expo-cli
 
 expo -h
+
+expo init mobile
