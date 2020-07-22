@@ -1,0 +1,178 @@
+{
+	"info": {
+		"_postman_id": "4426aacf-e958-4762-a4f1-52ae3c2c0eea",
+		"name": "tcc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "usuario",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Gabriel Stafoge\",\r\n    \"celular\": \"17991101361\",\r\n    \"foto\": \"\",\r\n    \"email\": \"gabrielaugust1@hotmail.com\",\r\n    \"senha\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3333/usuarios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "usuarios/id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3333/usuarios/5f0d001aa88da80790665f81",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"usuarios",
+						"5f0d001aa88da80790665f81"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "usuario",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMTY0MDVkY2Q1Nzk3NDU1MGRkZGE4ZCIsImlhdCI6MTU5NTI5Mzc5MCwiZXhwIjoxNTk1MzgwMTkwfQ.ReTjHKmdFyOP3pczZk_iZIYG7oKNFy9OMQ408YVrpho",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3333/usuarios/5f16405dcd57974550ddda8d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"usuarios",
+						"5f16405dcd57974550ddda8d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "usuario",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMTBjMjk3NjMyODNjMmNhMjhiYWYxYiIsImlhdCI6MTU5NTI5MDI4NCwiZXhwIjoxNTk1Mzc2Njg0fQ.SenPHRoUFxsFEbzCWALydZZnhaQ7JbMVNc5PVJOnsbg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Murillo Borges\",\r\n    \"celular\": \"17992445506\",\r\n    \"foto\": \"\",    \r\n    \"senhaAntiga\": \"123456\",\r\n    \"senha\": \"123456\",\r\n    \"senhaConfirmacao\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3333/usuarios/5f10c29763283c2ca28baf1b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"usuarios",
+						"5f10c29763283c2ca28baf1b"
+					]
+				},
+				"description": "    "
+			},
+			"response": []
+		},
+		{
+			"name": "usuarios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3333/usuarios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "authenticate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"murillo_borgess@hotmail.com\",\r\n    \"senha\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3333/authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3333",
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
