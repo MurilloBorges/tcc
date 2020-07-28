@@ -4,3 +4,6 @@ npm install -g expo-cli
 expo -h
 
 expo init mobile
+
+# Start expo simulador web
+https://snack.expo.io/
