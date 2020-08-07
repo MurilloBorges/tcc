@@ -7,3 +7,10 @@ expo init mobile
 
 # Start expo simulador web
 https://snack.expo.io/
+
+# Verificando comandos do expo
+expo -h
+
+# Intalando o aplicativo do expo no emulador android
+expo cliente:install:android
+
