@@ -3,11 +3,11 @@ import { View, Text } from 'react-native';
 
 import styles from './styles';
 
-export default function Chat() {
+export default function SignUp() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Psicólogo online</Text>
+        <Text style={styles.headerText}>Sign Up</Text>
       </View>
       <View style={styles.footer} />
     </View>
