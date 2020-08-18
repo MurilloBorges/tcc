@@ -4,26 +4,29 @@ import Constants from 'expo-constants';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: Constants.statusBarHeight + 20,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    height: 1,
+    marginTop: Constants.statusBarHeight + 24,
     alignItems: 'center',
-    alignSelf: 'center',
   },
   headerText: {
-    fontSize: 20,
-    color: '#737380',
+    fontSize: 26,
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   main: {
     backgroundColor: '#000f43',
     flex: 1,
-    marginTop: 24,
-    marginBottom: 24,
-    borderRadius: 12,
+    marginHorizontal: 24,
+    marginTop: 60,
+    marginBottom: 12,
+    borderRadius: 24,
   },
   login: {
     flex: 1,
@@ -51,5 +54,24 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
-  footer: {},
+  buttonRecuperarSenha: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  buttonRecuperarSenhaText: {
+    color: '#ffffff',
+    fontSize: 14,
+  },
+  footer: {
+    marginTop: 12,
+    marginBottom: 60,
+  },
+  buttonSignUp: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  buttonSignUpText: {
+    color: '#ffffff',
+    fontSize: 24,
+  },
 });
