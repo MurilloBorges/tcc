@@ -6,11 +6,18 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import styles from './styles';
 import image from '../../assets/bg.jpeg';
 
 export default function Login() {
+  const navigation = useNavigation();
+
+  function navigateToSignUp() {
+    navigation.navigate('SignUp');
+  }
+
   return (
     <View style={styles.container}>
       <ImageBackground source={image} style={styles.image}>
@@ -23,20 +30,20 @@ export default function Login() {
               style={styles.textInput}
               placeholder="E-mail"
               autoCorrect={false}
-              onChangeText={() => {}}
+              onChangeText={() => { }}
             />
             <TextInput
               style={styles.textInput}
               placeholder="Senha"
               autoCorrect={false}
-              onChangeText={() => {}}
+              onChangeText={() => { }}
             />
-            <TouchableOpacity style={styles.buttonLogin} onPress={() => {}}>
+            <TouchableOpacity style={styles.buttonLogin} onPress={() => { }}>
               <Text style={styles.buttonLoginText}>Entrar</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonRecuperarSenha}
-              onPress={() => {}}
+              onPress={() => { }}
             >
               <Text style={styles.buttonRecuperarSenhaText}>
                 Não sei minha senha
@@ -45,7 +52,10 @@ export default function Login() {
           </View>
         </View>
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.buttonSignUp} onPress={() => {}}>
+          <TouchableOpacity
+            style={styles.buttonSignUp}
+            onPress={navigateToSignUp}
+          >
             <Text style={styles.buttonSignUpText}>CADASTRAR</Text>
           </TouchableOpacity>
         </View>

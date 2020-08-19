@@ -25,7 +25,6 @@ export default StyleSheet.create({
     flex: 1,
     marginHorizontal: 24,
     marginTop: 60,
-    marginBottom: 12,
     borderRadius: 24,
   },
   login: {
@@ -64,11 +63,12 @@ export default StyleSheet.create({
   },
   footer: {
     marginTop: 12,
-    marginBottom: 60,
+    marginBottom: 12,
   },
   buttonSignUp: {
-    flex: 1,
     alignItems: 'center',
+    paddingVertical: 12,
+    marginHorizontal: 36,
   },
   buttonSignUpText: {
     color: '#ffffff',
