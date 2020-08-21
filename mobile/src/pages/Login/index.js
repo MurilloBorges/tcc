@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,14 +8,25 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+import api from '../../services/api';
 import styles from './styles';
 import image from '../../assets/bg.jpeg';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const navigation = useNavigation();
 
   function navigateToSignUp() {
     navigation.navigate('SignUp');
+  }
+
+  async function login() {
+    try {
+      await api.post('authenticate', { email, senha }).then((response) => {
+        alert(response.status);
+      });
+    } catch (error) { }
   }
 
   return (
@@ -30,15 +41,23 @@ export default function Login() {
               style={styles.textInput}
               placeholder="E-mail"
               autoCorrect={false}
-              onChangeText={() => { }}
+              value={email}
+              multiline={false}
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              onChangeText={(text) => setEmail(text)}
             />
             <TextInput
               style={styles.textInput}
               placeholder="Senha"
               autoCorrect={false}
-              onChangeText={() => { }}
+              value={senha}
+              multiline={false}
+              textContentType="password"
+              secureTextEntry
+              onChangeText={(text) => setSenha(text)}
             />
-            <TouchableOpacity style={styles.buttonLogin} onPress={() => { }}>
+            <TouchableOpacity style={styles.buttonLogin} onPress={login}>
               <Text style={styles.buttonLoginText}>Entrar</Text>
             </TouchableOpacity>
             <TouchableOpacity
