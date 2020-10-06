@@ -1,17 +1,17 @@
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const UsuarioSchema = new Schema(
+const UserSchema = new Schema(
   {
-    nome: {
+    name: {
       type: String,
       required: true,
     },
-    foto: {
+    photo: {
       type: String,
       required: false,
     },
-    celular: {
+    cellphone: {
       type: String,
       required: false,
     },
@@ -21,7 +21,7 @@ const UsuarioSchema = new Schema(
       unique: true,
       lowercase: true,
     },
-    senha: {
+    password: {
       type: String,
       required: true,
       select: false,
@@ -32,18 +32,18 @@ const UsuarioSchema = new Schema(
   }
 );
 
-UsuarioSchema.pre('save', async function(next) {
-  const hash = await bcrypt.hash(this.senha, 10);
-  this.senha = hash;
+UserSchema.pre('save', async function(next) {
+  const hash = await bcrypt.hash(this.password, 10);
+  this.password = hash;
 
   next();
 });
 
-UsuarioSchema.pre('findOneAndUpdate', async function(next) {
-  const hash = await bcrypt.hash(this.getUpdate().senha, 10);
-  this.getUpdate().senha = hash;
+UserSchema.pre('findOneAndUpdate', async function(next) {
+  const hash = await bcrypt.hash(this.getUpdate().password, 10);
+  this.getUpdate().password = hash;
 
   next();
 });
 
-module.exports = model('Usuario', UsuarioSchema);
+module.exports = model('User', UserSchema);

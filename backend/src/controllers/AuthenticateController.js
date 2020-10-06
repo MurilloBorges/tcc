@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import Usuario from '../models/Usuario';
+import User from '../models/User';
 import authConfig from '../config/auth';
 
 export function generateToken(params = {}) {
@@ -18,7 +18,7 @@ class SessionController {
         email: Yup.string()
           .email()
           .required(),
-        senha: Yup.string()
+        password: Yup.string()
           .min(6)
           .required(),
       });
@@ -29,29 +29,29 @@ class SessionController {
           .json({ error: 'Validações dos campos incorreta' });
       }
 
-      const { email, senha } = req.body;
+      const { email, password } = req.body;
 
-      const usuario = await Usuario.findOne({ email }).select('+senha');
+      const user = await User.findOne({ email }).select('+password');
 
-      if (!usuario) {
+      if (!user) {
         return res.status(404).json();
       }
 
-      if (senha && !(await bcrypt.compare(senha, usuario.senha))) {
-        return res.status(400).json({ error: 'Senha inválida' });
+      if (password && !(await bcrypt.compare(password, user.password))) {
+        return res.status(400).json({ error: 'password inválida' });
       }
 
-      usuario.senha = undefined;
+      user.password = undefined;
 
-      const { _id, nome, foto, celular } = usuario;
+      const { _id, name, photo, cellphone } = user;
 
       return res.json({
-        usuario: {
+        user: {
           _id,
-          nome,
+          name,
           email,
-          foto,
-          celular,
+          photo,
+          cellphone,
         },
         token: generateToken({ id: _id }),
       });

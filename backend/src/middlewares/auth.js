@@ -33,14 +33,14 @@ export default async (req, res, next) => {
     //   return res.status(401).json({ error: 'Token inválido' });
     // }
 
-    // req.idUsuario = decoded.id;
+    // req.userId = decoded.id;
 
     jwt.verify(token, authConfig.secret, (err, decoded) => {
       if (err) {
         logger.info('Retorno: Token inválido');
         return res.status(401).json({ error: 'Token inválido' });
       }
-      req.idUsuario = decoded.id;
+      req.userId = decoded.id;
       return next();
     });
 
