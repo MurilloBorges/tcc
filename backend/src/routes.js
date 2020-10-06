@@ -1,19 +1,32 @@
 import { Router } from 'express';
 
-import Usuario from './controllers/Usuario';
+import User from './controllers/UserController';
+import Chat from './controllers/ChatController';
+import Message from './controllers/MessageController';
 import authMiddleware from './middlewares/auth';
-import Authenticate from './controllers/Authenticate';
+import Authenticate from './controllers/AuthenticateController';
 
 const routes = new Router();
 
-routes.get('/usuarios', Usuario.index);
-routes.get('/usuarios/:id', Usuario.show);
-routes.post('/usuarios', Usuario.store);
+// USUÁRIO
+routes.get('/users', User.index);
+routes.get('/users/:id', User.show);
+routes.post('/users', User.store);
 
+// AUTENTICAÇÃO
 routes.post('/authenticate', Authenticate.store);
 routes.use(authMiddleware);
 
-routes.delete('/usuarios/:id', Usuario.delete);
-routes.patch('/usuarios/:id', Usuario.update);
+// USUÁRIO
+routes.delete('/users/:id', User.delete);
+routes.patch('/users/:id', User.update);
+
+// CHAT
+routes.get('/chats', Chat.index);
+routes.get('/chats/:id', Chat.show);
+routes.post('/chats', Chat.store);
+
+// MESSAGE
+routes.post('/messages', Message.store);
 
 export default routes;

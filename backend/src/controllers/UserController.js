@@ -1,14 +1,14 @@
 import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
-import Usuario from '../models/Usuario';
-import { generateToken } from './Authenticate';
+import User from '../models/User';
+import { generateToken } from './AuthenticateController';
 import { isEmpty } from '../helpers/funcoes';
 
-class UsuarioController {
+class UserController {
   async index(req, res) {
     try {
-      const usuarios = await Usuario.find();
-      res.json(usuarios);
+      const users = await User.find();
+      res.json(users);
     } catch (error) {
       res.status(500).json({ error });
     }
@@ -16,13 +16,13 @@ class UsuarioController {
 
   async show(req, res) {
     try {
-      const usuario = await Usuario.findById(req.params.id);
+      const user = await User.findById(req.params.id);
 
-      if (isEmpty(usuario)) {
+      if (isEmpty(user)) {
         return res.status(404).json();
       }
 
-      return res.json(usuario);
+      return res.json(user);
     } catch (error) {
       return res.status(500).json({ error });
     }
@@ -31,13 +31,13 @@ class UsuarioController {
   async store(req, res) {
     try {
       const schema = Yup.object().shape({
-        nome: Yup.string().required(),
-        foto: Yup.string(),
-        celular: Yup.string(),
+        name: Yup.string().required(),
+        photo: Yup.string(),
+        cellphone: Yup.string(),
         email: Yup.string()
           .email()
           .required(),
-        senha: Yup.string()
+        password: Yup.string()
           .required()
           .min(6),
       });
@@ -48,24 +48,24 @@ class UsuarioController {
           .json({ error: 'Validações dos campos incorreta' });
       }
 
-      const usuarioExistente = await Usuario.findOne({ email: req.body.email });
+      const ExistsUser = await User.findOne({ email: req.body.email });
 
-      if (usuarioExistente) {
+      if (ExistsUser) {
         return res
           .status(400)
           .json({ error: 'Já existe uma conta vinculada a este e-mail' });
       }
 
-      const { _id, nome, foto, celular, email } = await Usuario.create(
+      const { _id, name, photo, cellphone, email } = await User.create(
         req.body
       );
 
       return res.status(201).json({
-        usuario: {
+        user: {
           _id,
-          nome,
-          foto,
-          celular,
+          name,
+          photo,
+          cellphone,
           email,
         },
         token: generateToken({ id: _id }),
@@ -78,18 +78,17 @@ class UsuarioController {
   async update(req, res) {
     try {
       const schema = Yup.object().shape({
-        nome: Yup.string(),
-        foto: Yup.string(),
-        celular: Yup.string(),
-        // email: Yup.string().email(),
-        senhaAntiga: Yup.string().min(6),
-        senha: Yup.string()
+        name: Yup.string(),
+        photo: Yup.string(),
+        cellphone: Yup.string(),
+        oldPassword: Yup.string().min(6),
+        password: Yup.string()
           .min(6)
-          .when('senhaAntiga', (senhaAntiga, field) =>
-            senhaAntiga ? field.required() : field
+          .when('oldPassword', (oldPassword, field) =>
+            oldPassword ? field.required() : field
           ),
-        senhaConfirmacao: Yup.string(6).when('senha', (senha, field) =>
-          senha ? field.required().oneOf([Yup.ref('senha')]) : field
+        confirmPassword: Yup.string(6).when('password', (password, field) =>
+          password ? field.required().oneOf([Yup.ref('password')]) : field
         ),
       });
 
@@ -99,23 +98,23 @@ class UsuarioController {
           .json({ error: 'Validações dos campos incorreta' });
       }
 
-      const { senhaAntiga, nome, celular, foto, senha } = req.body;
+      const { oldPassword, name, cellphone, photo, password } = req.body;
 
-      const usuario = await Usuario.findById(req.params.id).select('+senha');
+      const user = await User.findById(req.params.id).select('+password');
 
-      if (isEmpty(usuario)) {
+      if (isEmpty(user)) {
         return res.status(404).json();
       }
 
-      if (senhaAntiga && !(await bcrypt.compare(senhaAntiga, usuario.senha))) {
-        return res.status(400).json({ error: 'Senhas não correspondem' });
+      if (oldPassword && !(await bcrypt.compare(oldPassword, user.password))) {
+        return res.status(400).json({ error: 'passwords não correspondem' });
       }
 
-      await Usuario.findByIdAndUpdate(req.params.id, {
-        nome,
-        celular,
-        foto,
-        senha,
+      await User.findByIdAndUpdate(req.params.id, {
+        name,
+        cellphone,
+        photo,
+        password,
       });
 
       return res.status(204).json();
@@ -126,9 +125,9 @@ class UsuarioController {
 
   async delete(req, res) {
     try {
-      const usuario = await Usuario.findByIdAndDelete(req.params.id);
+      const user = await User.findByIdAndDelete(req.params.id);
 
-      if (isEmpty(usuario)) {
+      if (isEmpty(user)) {
         return res.status(404).json();
       }
 
@@ -139,4 +138,4 @@ class UsuarioController {
   }
 }
 
-export default new UsuarioController();
+export default new UserController();
