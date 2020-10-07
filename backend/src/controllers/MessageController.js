@@ -5,7 +5,9 @@ class MessageController {
   async store(req, res) {
     try {
       const schema = Yup.object().shape({
-        chatId: Yup.objectId().required(),
+        chatId: Yup.string()
+          .required()
+          .min(24),
         message: Yup.string()
           .required()
           .min(1),
