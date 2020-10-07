@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import User from './controllers/UserController';
+import Password from './controllers/PasswordController';
 import Chat from './controllers/ChatController';
 import Message from './controllers/MessageController';
 import authMiddleware from './middlewares/auth';
@@ -20,6 +21,9 @@ routes.use(authMiddleware);
 // USUÁRIO
 routes.delete('/users/:id', User.delete);
 routes.patch('/users/:id', User.update);
+
+// SENHA
+routes.post('/users/:id/passwords', Password.store);
 
 // CHAT
 routes.get('/chats', Chat.index);
