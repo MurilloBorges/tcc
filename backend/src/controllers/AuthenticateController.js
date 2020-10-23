@@ -34,11 +34,11 @@ class SessionController {
       const user = await User.findOne({ email }).select('+password');
 
       if (!user) {
-        return res.status(404).json();
+        return res.status(404).json({ error: 'Usuário não cadastrado' });
       }
 
       if (password && !(await bcrypt.compare(password, user.password))) {
-        return res.status(400).json({ error: 'password inválida' });
+        return res.status(401).json({ error: 'Senha inválida' });
       }
 
       user.password = undefined;

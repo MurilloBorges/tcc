@@ -19,7 +19,7 @@ class UserController {
       const user = await User.findById(req.params.id);
 
       if (isEmpty(user)) {
-        return res.status(404).json();
+        return res.status(404).json({ error: 'Usuário não cadastrado' });
       }
 
       return res.json(user);
@@ -48,9 +48,9 @@ class UserController {
           .json({ error: 'Validações dos campos incorreta' });
       }
 
-      const ExistsUser = await User.findOne({ email: req.body.email });
+      const existsUser = await User.findOne({ email: req.body.email });
 
-      if (ExistsUser) {
+      if (existsUser) {
         return res
           .status(400)
           .json({ error: 'Já existe uma conta vinculada a este e-mail' });
@@ -81,15 +81,6 @@ class UserController {
         name: Yup.string(),
         photo: Yup.string(),
         cellphone: Yup.string(),
-        oldPassword: Yup.string().min(6),
-        password: Yup.string()
-          .min(6)
-          .when('oldPassword', (oldPassword, field) =>
-            oldPassword ? field.required() : field
-          ),
-        confirmPassword: Yup.string(6).when('password', (password, field) =>
-          password ? field.required().oneOf([Yup.ref('password')]) : field
-        ),
       });
 
       if (!(await schema.isValid(req.body))) {
@@ -98,23 +89,18 @@ class UserController {
           .json({ error: 'Validações dos campos incorreta' });
       }
 
-      const { oldPassword, name, cellphone, photo, password } = req.body;
+      const { name, cellphone, photo } = req.body;
 
-      const user = await User.findById(req.params.id).select('+password');
+      const user = await User.findById(req.params.id);
 
       if (isEmpty(user)) {
-        return res.status(404).json();
-      }
-
-      if (oldPassword && !(await bcrypt.compare(oldPassword, user.password))) {
-        return res.status(400).json({ error: 'passwords não correspondem' });
+        return res.status(404).json({ error: 'Usuário não cadastrado' });
       }
 
       await User.findByIdAndUpdate(req.params.id, {
         name,
         cellphone,
         photo,
-        password,
       });
 
       return res.status(204).json();
@@ -128,7 +114,7 @@ class UserController {
       const user = await User.findByIdAndDelete(req.params.id);
 
       if (isEmpty(user)) {
-        return res.status(404).json();
+        return res.status(404).json({ error: 'Usuário não cadastrado' });
       }
 
       return res.status(204).json();
