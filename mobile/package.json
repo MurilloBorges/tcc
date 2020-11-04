@@ -1,11 +1,14 @@
 {
+  "name": "tcc",
+  "version": "0.0.1",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",        
+    "test": "jest"    
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.10",
@@ -22,7 +25,9 @@
     "react-native-reanimated": "~1.9.0",
     "react-native-safe-area-context": "~3.0.7",
     "react-native-screens": "~2.9.0",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "react-native-vector-icons": "^7.1.0",
+    "redux": "^4.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
@@ -36,7 +41,12 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.5",
     "eslint-plugin-react-hooks": "^4.0.8",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "jest": "^26.4.2",
+    "babel-jest": "^26.3.0"
+  },
+  "jest": {
+    "preset": "react-native"
   },
   "private": true
 }

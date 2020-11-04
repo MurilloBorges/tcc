@@ -24,9 +24,11 @@ export default function Login() {
   async function login() {
     try {
       await api.post('authenticate', { email, senha }).then((response) => {
-        alert(response.status);
+        console.log(response.status);
       });
-    } catch (error) { }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

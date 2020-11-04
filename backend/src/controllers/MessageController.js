@@ -2,6 +2,7 @@
 import * as Yup from 'yup';
 import AssistantV2 from 'ibm-watson/assistant/v2';
 import { IamAuthenticator } from 'ibm-watson/auth';
+import 'dotenv/config';
 
 import Message from '../models/Message';
 
@@ -30,17 +31,16 @@ class MessageController {
       });
 
       const assistant = new AssistantV2({
-        version: '2020-22-09',
+        version: process.env.WATSON_VERSION,
         authenticator: new IamAuthenticator({
-          apikey: 'z6J7PMmI1KjIPdG5woG4VS38L74njNIZeNFXQW9rN4Bw',
+          apikey: process.env.WATSON_APIKEY,
         }),
-        serviceUrl:
-          'https://api.us-south.assistant.watson.cloud.ibm.com/instances/3af0bba2-1a44-4866-b2dc-f7901b0e6b10',
+        serviceUrl: process.env.WATSON_SERVICEURL,
         disableSslVerification: true,
       });
 
       const response = await assistant.messageStateless({
-        assistantId: 'b2f40ded-a26d-4a37-ad01-7d7c0fe2f0e1',
+        assistantId: process.env.WATSON_ASSITANTID,
         input: {
           message_type: 'text',
           text: req.body.message,
@@ -52,7 +52,7 @@ class MessageController {
       if (response.status === 200) {
         outputMessage = response.result.output.generic.map(async ({ text }) => {
           const message = await Message.create({
-            user: '5f7baa4e6c68dfbe5dd5992f',
+            user: process.env.WATSON_USERID,
             chat: req.body.chatId,
             message: text,
           });
