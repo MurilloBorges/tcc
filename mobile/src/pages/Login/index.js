@@ -3,8 +3,10 @@ import {
   View,
   Text,
   TextInput,
+  Alert,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -13,9 +15,10 @@ import styles from './styles';
 import image from '../../assets/bg.jpeg';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
   const navigation = useNavigation();
+  const [loading, setloading] = useState(false);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
 
   function navigateToSignUp() {
     navigation.navigate('SignUp');
@@ -23,9 +26,34 @@ export default function Login() {
 
   async function login() {
     try {
-      await api.post('authenticate', { email, senha }).then((response) => {
-        console.log(response.status);
-      });
+      if (!email || !password) {
+        let text = '';
+        if (!email) {
+          text = `${text} - E-mail \n`;
+        }
+        if (!password) {
+          text = `${text} - Senha`;
+        }
+
+        Alert.alert('Preencher campos necessários.', text);
+        return;
+      }
+
+      setloading(true);
+      await api
+        .post('authenticate', { email, password })
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            navigation.navigate('Chat');
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            Alert.alert(error.response.data.error);
+          }
+        })
+        .finally(() => setloading(false));
     } catch (error) {
       console.log(error);
     }
@@ -53,14 +81,18 @@ export default function Login() {
               style={styles.textInput}
               placeholder="Senha"
               autoCorrect={false}
-              value={senha}
+              value={password}
               multiline={false}
               textContentType="password"
               secureTextEntry
-              onChangeText={(text) => setSenha(text)}
+              onChangeText={(text) => setPassword(text)}
             />
             <TouchableOpacity style={styles.buttonLogin} onPress={login}>
-              <Text style={styles.buttonLoginText}>Entrar</Text>
+              {loading ? (
+                <ActivityIndicator size="small" color="#000f43" />
+              ) : (
+                  <Text style={styles.buttonLoginText}>Entrar</Text>
+                )}
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonRecuperarSenha}
