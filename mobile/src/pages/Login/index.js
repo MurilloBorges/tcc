@@ -42,9 +42,12 @@ export default function Login() {
       setloading(true);
       await api
         .post('authenticate', { email, password })
-        .then((response) => {
-          console.log(response);
+        .then(async (response) => {
           if (response.status === 200) {
+            await login(
+              response.data.token,
+              JSON.stringify(response.data.user)
+            );
             navigation.navigate('Chat');
           }
         })
