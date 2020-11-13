@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api';
 import styles from './styles';
 import image from '../../assets/bg.jpeg';
+import { login } from '../../services/authentication';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -24,7 +25,7 @@ export default function Login() {
     navigation.navigate('SignUp');
   }
 
-  async function login() {
+  async function handleSubmit() {
     try {
       if (!email || !password) {
         let text = '';
@@ -90,7 +91,7 @@ export default function Login() {
               secureTextEntry
               onChangeText={(text) => setPassword(text)}
             />
-            <TouchableOpacity style={styles.buttonLogin} onPress={login}>
+            <TouchableOpacity style={styles.buttonLogin} onPress={handleSubmit}>
               {loading ? (
                 <ActivityIndicator size="small" color="#000f43" />
               ) : (

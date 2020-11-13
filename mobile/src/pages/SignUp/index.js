@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import styles from './styles';
 import image from '../../assets/bg.jpeg';
@@ -18,19 +19,19 @@ import { login } from '../../services/authentication';
 export default function SignUp() {
   const navigation = useNavigation();
   const [loading, setloading] = useState(false);
-  const [name, setName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [cellphone, setCellphone] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [cellphone, setCellphone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   function navigateToLogin() {
     navigation.navigate('Login');
   }
 
-  async function signUp() {
+  async function handleSubmit() {
     try {
-      if (!name || !email || !password) {
+      if (!name || !email || !password || !confirmPassword) {
         let text = '';
         if (!name) {
           text = `${text} - Nome \n`;
@@ -39,10 +40,18 @@ export default function SignUp() {
           text = `${text} - E-mail \n`;
         }
         if (!password) {
-          text = `${text} - Senha`;
+          text = `${text} - Senha \n`;
+        }
+        if (!confirmPassword) {
+          text = `${text} - Confirmar senha`;
         }
 
         Alert.alert('Preencher campos necessários.', text);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        Alert.alert('Confirmação da senha incorreta');
         return;
       }
 
@@ -75,73 +84,78 @@ export default function SignUp() {
         <View style={styles.header}>
           <Text style={styles.headerText}>Psicólogo online</Text>
         </View>
-        <View style={styles.main}>
-          <View style={styles.login}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Nome"
-              value={name}
-              autoCorrect={false}
-              multiline={false}
-              textContentType="username"
-              keyboardType="default"
-              onChangeText={(text) => setName(text)}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="E-mail"
-              value={email}
-              autoCorrect={false}
-              multiline={false}
-              textContentType="emailAddress"
-              keyboardType="email-address"
-              onChangeText={(text) => setEmail(text)}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Celular"
-              value={cellphone}
-              autoCorrect={false}
-              multiline={false}
-              textContentType="telephoneNumber"
-              keyboardType="phone-pad"
-              onChangeText={(text) => setCellphone(text)}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Senha"
-              autoCorrect={false}
-              value={password}
-              multiline={false}
-              secureTextEntry
-              textContentType="newPassword"
-              onChangeText={(text) => setPassword(text)}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Confirmar senha"
-              autoCorrect={false}
-              multiline={false}
-              value={confirmPassword}
-              secureTextEntry
-              textContentType="newPassword"
-              onChangeText={(text) => setConfirmPassword(text)}
-            />
-            <TouchableOpacity style={styles.buttonLogin} onPress={signUp}>
-              {loading ? (
-                <ActivityIndicator size="small" color="#000f43" />
-              ) : (
-                  <Text style={styles.buttonLoginText}>Cadastrar</Text>
-                )}
-            </TouchableOpacity>
+        <KeyboardAwareScrollView>
+          <View style={styles.main}>
+            <View style={styles.login}>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Nome"
+                value={name}
+                autoCorrect={false}
+                multiline={false}
+                textContentType="username"
+                keyboardType="default"
+                onChangeText={(text) => setName(text)}
+              />
+              <TextInput
+                style={styles.textInput}
+                placeholder="E-mail"
+                value={email}
+                autoCorrect={false}
+                multiline={false}
+                textContentType="emailAddress"
+                keyboardType="email-address"
+                onChangeText={(text) => setEmail(text)}
+              />
+              <TextInput
+                style={styles.textInput}
+                placeholder="Celular"
+                value={cellphone}
+                autoCorrect={false}
+                multiline={false}
+                textContentType="telephoneNumber"
+                keyboardType="phone-pad"
+                onChangeText={(text) => setCellphone(text)}
+              />
+              <TextInput
+                style={styles.textInput}
+                placeholder="Senha"
+                autoCorrect={false}
+                value={password}
+                multiline={false}
+                secureTextEntry
+                textContentType="newPassword"
+                onChangeText={(text) => setPassword(text)}
+              />
+              <TextInput
+                style={styles.textInput}
+                placeholder="Confirmar senha"
+                autoCorrect={false}
+                multiline={false}
+                value={confirmPassword}
+                secureTextEntry
+                textContentType="newPassword"
+                onChangeText={(text) => setConfirmPassword(text)}
+              />
+              <TouchableOpacity
+                style={styles.buttonLogin}
+                onPress={handleSubmit}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#000f43" />
+                ) : (
+                    <Text style={styles.buttonLoginText}>Cadastrar</Text>
+                  )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </KeyboardAwareScrollView>
         <View style={styles.footer}>
           <TouchableOpacity
             style={styles.buttonSignUp}
             onPress={navigateToLogin}
           >
-            <Text style={styles.buttonSignUpText}>Login</Text>
+            <Text style={styles.buttonSignUpText}>LOGIN</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
