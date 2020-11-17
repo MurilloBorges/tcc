@@ -12,7 +12,15 @@ class ChatController {
       );
 
       if (isEmpty(chat)) {
-        return res.status(404).json({ error: 'Conversa não encontrada' });
+        const { _id, createdAt, updatedAt, user } = await Chat.create({ user: req.userId });
+
+        return res.status(200).json({
+          _id,
+          createdAt,
+          updatedAt,
+          user,
+          messages: [],
+        });
       }
 
       const messages = await Message.find({ chat: chat._id });

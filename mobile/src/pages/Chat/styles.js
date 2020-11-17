@@ -18,5 +18,11 @@ export default StyleSheet.create({
     color: '#737380',
     fontWeight: 'bold',
   },
+  main: {
+    backgroundColor: '#f9f9f9',
+    flex: 1,
+    marginVertical: 12,
+    borderRadius: 24,
+  },
   footer: {},
 });

@@ -40,7 +40,7 @@ class MessageController {
       });
 
       const response = await assistant.messageStateless({
-        assistantId: process.env.WATSON_ASSITANTID,
+        assistantId: process.env.WATSON_ASSISTANTID,
         input: {
           message_type: 'text',
           text: req.body.message,
@@ -77,6 +77,7 @@ class MessageController {
         },
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error });
     }
   }
