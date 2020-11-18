@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useCallback, useEffect } from 'react';
-import { GiftedChat } from 'react-native-gifted-chat';
-import { View, Text, Alert } from 'react-native';
+import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
+import { View, Text, Alert, ActivityIndicator } from 'react-native';
+import { IconButton } from 'react-native-paper';
 import { getUser } from '../../services/authentication';
 import profile from '../../assets/user.png';
 
@@ -10,10 +11,12 @@ import api from '../../services/api';
 
 export default function Chat() {
   const [messages, setMessages] = useState([]);
+  const [userCurrent, setUserCurrent] = useState({});
 
   useEffect(() => {
     async function getChat() {
       const user = JSON.parse(await getUser()) || null;
+      setUserCurrent(user);
 
       await api
         .get('chats')
@@ -34,8 +37,8 @@ export default function Chat() {
                 },
               ]);
             } else {
-              setMessages([
-                response.data.messages.map((message) => ({
+              setMessages(
+                response.data.messages.reverse().map((message) => ({
                   _id: message._id,
                   text: message.message,
                   createdAt: message.createdAt,
@@ -44,8 +47,8 @@ export default function Chat() {
                     name: '',
                     avatar: profile,
                   },
-                })),
-              ]);
+                }))
+              );
             }
           }
         })
@@ -59,11 +62,63 @@ export default function Chat() {
     getChat();
   }, []);
 
-  const onSend = useCallback((messages = []) => {
+  // useEffect(() => {
+  //   function log() {
+  //     console.log('messages', messages);
+  //   }
+
+  //   log();
+  // }, [messages]);
+
+  function renderBubble(props) {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#6646ee',
+          },
+        }}
+        textStyle={{
+          right: {
+            color: '#fff',
+          },
+        }}
+      />
+    );
+  }
+
+  const handleSend = useCallback((newMessage = []) => {
     setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
+      GiftedChat.append(previousMessages, newMessage)
     );
   }, []);
+
+  function scrollToBottomComponent() {
+    return (
+      <View style={styles.bottomComponentContainer}>
+        <IconButton icon="chevron-double-down" size={36} color="#6646ee" />
+      </View>
+    );
+  }
+
+  function renderSend(props) {
+    return (
+      <Send {...props}>
+        <View style={styles.sendingContainer}>
+          <IconButton icon="send-circle" size={32} color="#6646ee" />
+        </View>
+      </Send>
+    );
+  }
+
+  function renderLoading() {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6646ee" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -73,10 +128,18 @@ export default function Chat() {
       <View style={styles.main}>
         <GiftedChat
           messages={messages}
-          onSend={(messages) => onSend(messages)}
+          onSend={(message) => handleSend(message)}
           user={{
-            _id: 1,
+            _id: userCurrent._id,
+            name: userCurrent.name,
           }}
+          placeholder="Digite uma mensagem"
+          showUserAvatar
+          scrollToBottom
+          renderLoading={renderLoading}
+          renderSend={renderSend}
+          scrollToBottomComponent={scrollToBottomComponent}
+          renderBubble={renderBubble}
         />
       </View>
       <View style={styles.footer} />
