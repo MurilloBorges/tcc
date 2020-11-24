@@ -23,13 +23,16 @@ class ChatController {
         });
       }
 
-      const messages = await Message.find({ chat: chat._id });
+      const messages = await Message.find({ chat: chat._id }).populate('user');
 
       return res.json({
         ...chat._doc,
         messages: messages.map(message => ({
           _id: message._id,
-          user: message.user,
+          user: {
+            _id: message.user._id,
+            name: message.user.name,
+          },
           message: message.message,
           createdAt: message.createdAt,
         })),
@@ -47,13 +50,16 @@ class ChatController {
         return res.status(404).json({ error: 'Conversa não encontrada' });
       }
 
-      const messages = await Message.find({ chat: req.params.id });
+      const messages = await Message.find({ chat: req.params.id }).populate('user');
 
       return res.json({
         ...chat._doc,
         messages: messages.map(message => ({
           _id: message._id,
-          user: message.user,
+          user: {
+            _id: message.user._id,
+            name: message.user.name,
+          },
           message: message.message,
           createdAt: message.createdAt,
         })),

@@ -4,7 +4,6 @@ import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 import { View, Text, Alert, ActivityIndicator } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { getUser } from '../../services/authentication';
-import profile from '../../assets/user.png';
 
 import styles from './styles';
 import api from '../../services/api';
@@ -12,6 +11,7 @@ import api from '../../services/api';
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [userCurrent, setUserCurrent] = useState({});
+  const [chat, setChat] = useState({});
 
   useEffect(() => {
     async function getChat() {
@@ -22,7 +22,13 @@ export default function Chat() {
         .get('chats')
         .then(async (response) => {
           if (response.status === 200) {
-            console.log(response.data);
+            setChat({
+              ...chat,
+              _id: response.data._id,
+              createdAt: response.data.createdAt,
+              updatedAt: response.data.updatedAt,
+              user: response.data.user,
+            });
             if (response.data.messages.length === 0) {
               setMessages([
                 {
@@ -32,7 +38,7 @@ export default function Chat() {
                   user: {
                     _id: '5f7baa4e6c68dfbe5dd5992f',
                     name: 'Psicólogo Online',
-                    avatar: profile,
+                    avatar: '',
                   },
                 },
               ]);
@@ -43,9 +49,9 @@ export default function Chat() {
                   text: message.message,
                   createdAt: message.createdAt,
                   user: {
-                    _id: message.user,
-                    name: '',
-                    avatar: profile,
+                    _id: message.user._id,
+                    name: message.user.name,
+                    avatar: '',
                   },
                 }))
               );
@@ -61,14 +67,6 @@ export default function Chat() {
 
     getChat();
   }, []);
-
-  // useEffect(() => {
-  //   function log() {
-  //     console.log('messages', messages);
-  //   }
-
-  //   log();
-  // }, [messages]);
 
   function renderBubble(props) {
     return (
@@ -88,10 +86,29 @@ export default function Chat() {
     );
   }
 
-  const handleSend = useCallback((newMessage = []) => {
+  const handleSend = useCallback(async (newMessage = []) => {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, newMessage)
     );
+    await api
+      .post('messages', { chatId: chat._id, message: newMessage[0].text })
+      .then((response) => {
+        const message = [];
+        message.push({
+          _id: response.data.message._id,
+          text: response.data.message.output[0].message,
+          createdAt: new Date(),
+          user: {
+            _id: '5f7baa4e6c68dfbe5dd5992f',
+            name: 'Psicólogo Online',
+            avatar: '',
+          },
+        });
+        setMessages((previousMessages) =>
+          GiftedChat.append(previousMessages, message)
+        );
+      });
+    // newMessage.unshift(message);
   }, []);
 
   function scrollToBottomComponent() {

@@ -24,10 +24,13 @@ class MessageController {
           .json({ error: 'Validações dos campos incorreta' });
       }
 
+      const { message, chatId } = req.body;
+      console.log('teste: ', message, chatId);
+
       const { _id } = await Message.create({
         user: req.userId,
-        chat: req.body.chatId,
-        message: req.body.message,
+        chat: chatId,
+        message,
       });
 
       const assistant = new AssistantV2({
@@ -43,23 +46,24 @@ class MessageController {
         assistantId: process.env.WATSON_ASSISTANTID,
         input: {
           message_type: 'text',
-          text: req.body.message,
+          text: message,
         },
       });
 
+      console.log('output: ', response.result.output.generic);
       let outputMessage;
 
       if (response.status === 200) {
         outputMessage = response.result.output.generic.map(async ({ text }) => {
-          const message = await Message.create({
+          const messageWatson = await Message.create({
             user: process.env.WATSON_USERID,
-            chat: req.body.chatId,
+            chat: chatId,
             message: text,
           });
 
           return {
-            _id: message._doc._id,
-            message: text,
+            _id: messageWatson._doc._id,
+            messageWatson: text,
           };
         });
       } else {
