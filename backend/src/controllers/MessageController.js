@@ -25,7 +25,7 @@ class MessageController {
       }
 
       const { message, chatId } = req.body;
-      console.log('teste: ', message, chatId);
+      console.log('input: ', message, chatId);
 
       const { _id } = await Message.create({
         user: req.userId,
@@ -63,7 +63,7 @@ class MessageController {
 
           return {
             _id: messageWatson._doc._id,
-            messageWatson: text,
+            message: text,
           };
         });
       } else {

@@ -87,12 +87,14 @@ export default function Chat() {
   }
 
   const handleSend = useCallback(async (newMessage = []) => {
+    console.log('send');
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, newMessage)
     );
     await api
       .post('messages', { chatId: chat._id, message: newMessage[0].text })
       .then((response) => {
+        console.log(response.data);
         const message = [];
         message.push({
           _id: response.data.message._id,
@@ -107,8 +109,10 @@ export default function Chat() {
         setMessages((previousMessages) =>
           GiftedChat.append(previousMessages, message)
         );
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    // newMessage.unshift(message);
   }, []);
 
   function scrollToBottomComponent() {
