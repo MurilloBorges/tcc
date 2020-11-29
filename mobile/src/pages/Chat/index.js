@@ -87,12 +87,13 @@ export default function Chat() {
   }
 
   const handleSend = useCallback(async (newMessage = []) => {
-    console.log('send');
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, newMessage)
     );
+    const { text } = newMessage[0];
+    console.log('send', text);
     await api
-      .post('messages', { chatId: chat._id, message: newMessage[0].text })
+      .post('messages', { chatId: chat._id, message: text })
       .then((response) => {
         console.log(response.data);
         const message = [];
